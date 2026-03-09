@@ -205,8 +205,8 @@
             </div>
 
             <div class="input-box">
-                <label>Horizontal Resolution (Pixels)</label>
-                <input type="number" id="resW" value="1920" oninput="runCalc('res')">
+                <label>Vertical Resolution (Pixels)</label>
+                <input type="number" id="resH" value="1080" oninput="runCalc('res')">
             </div>
         </div>
 
@@ -219,18 +219,18 @@
                     <span class="val-output"><span id="outW_mm">0</span> x <span id="outH_mm">0</span> mm</span>
                 </div>
                 <div class="result-row">
-                    <span class="val-label">Cabinet Layout</span>
+                    <span class="val-label">Exact Cabinet Layout</span>
                     <span class="val-output val-red" id="cabLayout">0 x 0</span>
                 </div>
                 <div class="result-row">
-                    <span class="val-label">Total Footprint</span>
+                    <span class="val-label">Theoretical Footprint</span>
                     <span class="val-output" id="footprint">0 x 0 mm</span>
                 </div>
             </div>
 
             <div class="result-card">
                 <div class="result-row">
-                    <span class="val-label">Total Cabinets (600x337.5)</span>
+                    <span class="val-label">Exact Cabinet Count</span>
                     <span class="val-output" id="totalCabs">0</span>
                 </div>
                 <div class="result-row">
@@ -267,11 +267,12 @@ function runCalc(source) {
     let diag = parseFloat(document.getElementById('diag').value) || 0;
     let ratio = parseFloat(document.getElementById('ratio').value);
     let pitch = parseFloat(document.getElementById('pitch').value) || 1.5;
-    let resW = parseFloat(document.getElementById('resW').value) || 0;
+    let resH = parseFloat(document.getElementById('resH').value) || 0;
     let manualW = parseFloat(document.getElementById('manualW').value) || 0;
 
     let wMm, hMm;
 
+    // 1. Conversione Pollici/Millimetri
     if (source === 'mm') {
         wMm = manualW;
         hMm = manualW / ratio;
@@ -286,25 +287,32 @@ function runCalc(source) {
         document.getElementById('manualH').value = Math.round(hMm);
     }
 
+    // 2. Logica Sincronizzata con Risoluzione Verticale
     if (source === 'res') {
-        pitch = wMm / resW;
+        pitch = hMm / resH;
         document.getElementById('pitch').value = pitch.toFixed(3);
     } else {
-        resW = Math.round(wMm / pitch);
-        document.getElementById('resW').value = resW;
+        resH = Math.round(hMm / pitch);
+        document.getElementById('resH').value = resH;
     }
 
-    const resH = Math.round(hMm / pitch);
+    const resW = Math.round(wMm / pitch);
     const totalPx = resW * resH;
 
-    const cabsW = Math.ceil(wMm / CAB_W);
-    const cabsH = Math.ceil(hMm / CAB_H);
+    // 3. Calcolo Cabinet SENZA arrotondamento (Math.ceil rimosso)
+    const cabsW = wMm / CAB_W;
+    const cabsH = hMm / CAB_H;
+    const exactTotalCabs = cabsW * cabsH;
     
+    // 4. Update UI
     document.getElementById('outW_mm').innerText = Math.round(wMm);
     document.getElementById('outH_mm').innerText = Math.round(hMm);
-    document.getElementById('footprint').innerText = `${cabsW * CAB_W} x ${cabsH * CAB_H} mm`;
-    document.getElementById('cabLayout').innerText = `${cabsW} (W) x ${cabsH} (H)`;
-    document.getElementById('totalCabs').innerText = cabsW * cabsH;
+    
+    // Mostriamo 2 decimali per precisione tecnica
+    document.getElementById('footprint').innerText = `${(cabsW * CAB_W).toFixed(1)} x ${(cabsH * CAB_H).toFixed(1)} mm`;
+    document.getElementById('cabLayout').innerText = `${cabsW.toFixed(2)} (W) x ${cabsH.toFixed(2)} (H)`;
+    document.getElementById('totalCabs').innerText = exactTotalCabs.toFixed(2);
+    
     document.getElementById('totalPx').innerText = totalPx.toLocaleString();
     document.getElementById('ports650').innerText = Math.ceil(totalPx / CAP_650);
     document.getElementById('ports5G').innerText = Math.ceil(totalPx / CAP_5G);
