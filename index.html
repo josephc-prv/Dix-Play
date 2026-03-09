@@ -21,50 +21,34 @@
             background-color: var(--pv-black); 
             color: var(--pv-white); 
             margin: 0; padding: 10px;
-            display: flex; justify-content: center; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+        }
+
+        /* Container del Logo in alto */
+        .logo-header {
+            width: 100%;
+            max-width: 1150px;
+            background: var(--pv-white);
+            padding: 20px;
+            margin-bottom: 5px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 4px solid var(--pv-red);
+        }
+
+        .logo-header img {
+            max-width: 350px;
+            height: auto;
         }
 
         .main-container {
             width: 100%; max-width: 1150px;
             border: 1px solid var(--pv-anthracite);
             background: var(--pv-anthracite);
-            border-radius: 8px; overflow: hidden;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6); margin: auto;
-        }
-
-        .header {
-            padding: 30px; border-bottom: 4px solid var(--pv-red);
-            background: var(--pv-white); text-align: center;
-            display: flex; flex-direction: column; align-items: center;
-        }
-
-        .pv-logo-box {
-            border: 2px solid var(--pv-anthracite);
-            padding: 10px 20px;
-            display: inline-block;
-        }
-
-        .pv-logo-text {
-            font-weight: 900;
-            text-transform: uppercase;
-            font-size: 2rem;
-            letter-spacing: -1px;
-            color: var(--pv-anthracite);
-            margin: 0;
-            line-height: 1;
-        }
-
-        .pv-logo-text span { color: var(--pv-red); }
-
-        .tagline {
-            color: var(--pv-anthracite);
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            font-weight: bold;
-            margin-top: 5px;
-            border-top: 2px solid var(--pv-anthracite);
-            padding-top: 5px;
-            display: block;
+            border-radius: 0 0 8px 8px; overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
         }
 
         .content-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: #444; }
@@ -105,17 +89,16 @@
         .val-output { font-size: 1rem; font-weight: 700; }
         .val-red { color: var(--pv-red); }
 
-        .footer { padding: 15px; text-align: center; font-size: 0.65rem; color: #777; background: var(--pv-dark); text-transform: uppercase; }
+        .footer { padding: 15px; text-align: center; font-size: 0.65rem; color: #777; background: var(--pv-dark); text-transform: uppercase; border-radius: 0 0 8px 8px; width: 100%; max-width: 1150px; }
     </style>
 </head>
 <body>
 
-<div class="main-container">
-    <div class="header">
-    <img src="logo.png" alt="Primeview Logo" style="max-width: 400px; height: auto;">
+<div class="logo-header">
+    <img src="logo.png" alt="Primeview Global Logo">
 </div>
-    </div>
 
+<div class="main-container">
     <div class="content-grid">
         <div class="panel">
             <div class="section-wrapper">
@@ -212,8 +195,8 @@
             </div>
         </div>
     </div>
-    <div class="footer">PRIMEVIEW GLOBAL - LED CONFIGURATOR PRO</div>
 </div>
+<div class="footer">PRIMEVIEW GLOBAL - LED CONFIGURATOR PRO</div>
 
 <script>
 const CAB_W = 600;
@@ -244,14 +227,14 @@ function runCalc(source) {
         wMm = manualW; hMm = manualH;
         ratio = wMm / hMm;
         diag = (Math.sqrt(Math.pow(wMm, 2) + Math.pow(hMm, 2))) / 25.4;
-        document.getElementById('diag').value = diag.toFixed(1);
+        document.getElementById('diag').value = isNaN(diag) ? "" : diag.toFixed(1);
     } else {
         ratio = parseFloat(ratioVal);
         if (source === 'mm') {
             wMm = manualW; hMm = manualW / ratio;
             document.getElementById('manualH').value = Math.round(hMm);
             diag = (Math.sqrt(Math.pow(wMm, 2) + Math.pow(hMm, 2))) / 25.4;
-            document.getElementById('diag').value = diag.toFixed(1);
+            document.getElementById('diag').value = isNaN(diag) ? "" : diag.toFixed(1);
         } else {
             hMm = (diag / Math.sqrt(Math.pow(ratio, 2) + 1)) * 25.4;
             wMm = hMm * ratio;
@@ -260,7 +243,7 @@ function runCalc(source) {
         }
     }
 
-    let ratioLabel = ratio.toFixed(2) + ":1";
+    let ratioLabel = isNaN(ratio) ? "-" : ratio.toFixed(2) + ":1";
     let is169 = Math.abs(ratio - 1.777) < 0.02;
     let is219 = Math.abs(ratio - 2.333) < 0.02;
     let is329 = Math.abs(ratio - 3.555) < 0.02;
@@ -297,23 +280,23 @@ function runCalc(source) {
 
     const resW = Math.round(wMm / pitch);
     const resH = Math.round(hMm / pitch);
-    document.getElementById('resW').value = resW;
-    document.getElementById('resH').value = resH;
+    document.getElementById('resW').value = isNaN(resW) ? "" : resW;
+    document.getElementById('resH').value = isNaN(resH) ? "" : resH;
 
     const totalPx = resW * resH;
     const reqPorts590 = Math.ceil(totalPx / CAP_590);
     const pxPerPort = reqPorts590 > 0 ? Math.round(totalPx / reqPorts590) : 0;
 
     document.getElementById('currentRatioOutput').innerText = ratioLabel;
-    document.getElementById('activeArea').innerText = `${Math.round(wMm)}x${Math.round(hMm)}mm (${diag.toFixed(1)}")`;
-    document.getElementById('cabLayout').innerText = `${cabsW.toFixed(2)}x${cabsH.toFixed(2)}`;
-    document.getElementById('totalCabs').innerText = (cabsW * cabsH).toFixed(2);
-    document.getElementById('totalPx').innerText = totalPx.toLocaleString();
-    document.getElementById('portStress').innerText = `${pxPerPort.toLocaleString()} px/port`;
-    document.getElementById('ports650').innerText = Math.ceil(totalPx / CAP_650);
-    document.getElementById('ports5G').innerText = Math.ceil(totalPx / CAP_5G);
-    document.getElementById('viewRange').innerText = `${(pitch * 1).toFixed(1)}-${(pitch * 3).toFixed(1)}m`;
-    document.getElementById('bromptonPorts').innerText = Math.ceil(totalPx / 524000) + " Ports";
+    document.getElementById('activeArea').innerText = isNaN(wMm) ? "-" : `${Math.round(wMm)}x${Math.round(hMm)}mm (${diag.toFixed(1)}")`;
+    document.getElementById('cabLayout').innerText = isNaN(cabsW) ? "-" : `${cabsW.toFixed(2)}x${cabsH.toFixed(2)}`;
+    document.getElementById('totalCabs').innerText = isNaN(cabsW) ? "-" : (cabsW * cabsH).toFixed(2);
+    document.getElementById('totalPx').innerText = isNaN(totalPx) ? "-" : totalPx.toLocaleString();
+    document.getElementById('portStress').innerText = pxPerPort > 0 ? `${pxPerPort.toLocaleString()} px/port` : "-";
+    document.getElementById('ports650').innerText = isNaN(totalPx) ? "-" : Math.ceil(totalPx / CAP_650);
+    document.getElementById('ports5G').innerText = isNaN(totalPx) ? "-" : Math.ceil(totalPx / CAP_5G);
+    document.getElementById('viewRange').innerText = isNaN(pitch) ? "-" : `${(pitch * 1).toFixed(1)}-${(pitch * 3).toFixed(1)}m`;
+    document.getElementById('bromptonPorts').innerText = isNaN(totalPx) ? "-" : Math.ceil(totalPx / 524000) + " Ports";
     document.getElementById('novaProcessor').innerText = reqPorts590 <= 6 ? "VX600 Pro" : reqPorts590 <= 10 ? "VX1000 Pro" : reqPorts590 <= 20 ? "VX2000 Pro" : "H-Series";
 }
 </script>
