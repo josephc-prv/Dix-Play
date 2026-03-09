@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Primeview Global | LED Configurator Pro</title>
+    <title>Primeview Global | Dix-Play LED Configurator</title>
     <style>
         :root {
             --pv-red: #e31e24;
@@ -24,25 +24,39 @@
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
 
-        /* LOGO IN ALTO - CENTRATO */
+        /* HEADER CON DOPPIO LOGO */
         .header-logo-container {
             width: 100%;
             max-width: 1150px;
             background: var(--pv-white);
-            padding: 30px;
+            padding: 25px 40px;
             margin-bottom: 20px;
             border-radius: 8px;
             border-bottom: 5px solid var(--pv-red);
             display: flex;
-            justify-content: center;
+            justify-content: center; /* Centra i loghi */
             align-items: center;
+            gap: 50px; /* Spazio tra logo 1 e logo 2 */
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            flex-wrap: wrap; /* Adattabile su mobile */
         }
 
         .header-logo-container img {
-            max-width: 450px; /* Logo grande e visibile */
+            max-width: 320px; /* Dimensione bilanciata per due loghi */
             width: 100%;
             height: auto;
+        }
+
+        /* Divisore tra i loghi */
+        .logo-divider {
+            width: 2px;
+            height: 50px;
+            background-color: #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .logo-divider { display: none; }
+            .header-logo-container { flex-direction: column; gap: 20px; }
         }
 
         .main-container {
@@ -93,13 +107,28 @@
         .val-output { font-size: 1rem; font-weight: 700; }
         .val-red { color: var(--pv-red); }
 
-        .footer { padding: 20px; text-align: center; font-size: 0.65rem; color: #777; background: var(--pv-dark); text-transform: uppercase; width: 100%; max-width: 1150px; margin-top: 1px; border-radius: 0 0 8px 8px; }
+        .footer { 
+            padding: 20px; 
+            text-align: center; 
+            font-size: 0.65rem; 
+            color: var(--pv-grey-text); /* Colore antracite/grigio scuro richiesto */
+            background: var(--pv-dark); 
+            text-transform: uppercase; 
+            width: 100%; 
+            max-width: 1150px; 
+            margin-top: 1px; 
+            border-radius: 0 0 8px 8px; 
+        }
     </style>
 </head>
 <body>
 
     <div class="header-logo-container">
         <img src="logo.png" alt="Primeview Global Logo">
+        
+        <div class="logo-divider"></div>
+        
+        <img src="Dixplay_logo.png" alt="Dix-Play Logo">
     </div>
 
     <div class="main-container">
@@ -199,6 +228,7 @@
             </div>
         </div>
     </div>
+    
     <div class="footer">PRIMEVIEW GLOBAL - DIX-PLAY - LED CALCULATOR</div>
 
 <script>
@@ -298,11 +328,9 @@ function runCalc(source) {
     document.getElementById('portStress').innerText = pxPerPort > 0 ? `${pxPerPort.toLocaleString()} px/port` : "-";
     document.getElementById('ports650').innerText = isNaN(totalPx) ? "-" : Math.ceil(totalPx / CAP_650);
     document.getElementById('ports5G').innerText = isNaN(totalPx) ? "-" : Math.ceil(totalPx / CAP_5G);
-    document.getElementById('viewRange').innerText = isNaN(pitch) ? "-" : `${(pitch * 1).toFixed(1)}-${(pitch * 3).toFixed(1)}m`;
     document.getElementById('bromptonPorts').innerText = isNaN(totalPx) ? "-" : Math.ceil(totalPx / 524000) + " Ports";
     document.getElementById('novaProcessor').innerText = reqPorts590 <= 6 ? "VX600 Pro" : reqPorts590 <= 10 ? "VX1000 Pro" : reqPorts590 <= 20 ? "VX2000 Pro" : "H-Series";
 }
 </script>
 </body>
 </html>
-
