@@ -20,26 +20,28 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
             background-color: var(--pv-black); 
             color: var(--pv-white); 
-            margin: 0; padding: 10px;
+            margin: 0; padding: 20px 10px;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
 
-        /* Container del Logo in alto */
-        .logo-header {
+        /* LOGO IN ALTO - CENTRATO */
+        .header-logo-container {
             width: 100%;
             max-width: 1150px;
             background: var(--pv-white);
-            padding: 20px;
-            margin-bottom: 5px;
-            border-radius: 8px 8px 0 0;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-bottom: 5px solid var(--pv-red);
             display: flex;
             justify-content: center;
             align-items: center;
-            border-bottom: 4px solid var(--pv-red);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .logo-header img {
-            max-width: 350px;
+        .header-logo-container img {
+            max-width: 450px; /* Logo grande e visibile */
+            width: 100%;
             height: auto;
         }
 
@@ -47,7 +49,7 @@
             width: 100%; max-width: 1150px;
             border: 1px solid var(--pv-anthracite);
             background: var(--pv-anthracite);
-            border-radius: 0 0 8px 8px; overflow: hidden;
+            border-radius: 8px; overflow: hidden;
             box-shadow: 0 25px 50px rgba(0,0,0,0.6);
         }
 
@@ -81,7 +83,9 @@
             width: 100%; padding: 15px; background: transparent; border: 2px solid var(--pv-red);
             color: var(--pv-white); text-transform: uppercase; font-weight: 800;
             cursor: pointer; border-radius: 4px; margin-top: 10px;
+            transition: all 0.3s;
         }
+        .btn-reset:hover { background: var(--pv-red); color: white; }
 
         .result-card { background: var(--pv-dark); padding: 15px; border-radius: 4px; margin-bottom: 12px; border: 1px solid #333; }
         .result-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
@@ -89,114 +93,114 @@
         .val-output { font-size: 1rem; font-weight: 700; }
         .val-red { color: var(--pv-red); }
 
-        .footer { padding: 15px; text-align: center; font-size: 0.65rem; color: #777; background: var(--pv-dark); text-transform: uppercase; border-radius: 0 0 8px 8px; width: 100%; max-width: 1150px; }
+        .footer { padding: 20px; text-align: center; font-size: 0.65rem; color: #777; background: var(--pv-dark); text-transform: uppercase; width: 100%; max-width: 1150px; margin-top: 1px; border-radius: 0 0 8px 8px; }
     </style>
 </head>
 <body>
 
-<div class="logo-header">
-    <img src="logo.png" alt="Primeview Global Logo">
-</div>
+    <div class="header-logo-container">
+        <img src="logo.png" alt="Primeview Global Logo">
+    </div>
 
-<div class="main-container">
-    <div class="content-grid">
-        <div class="panel">
-            <div class="section-wrapper">
-                <div id="errorBox" class="error-overlay">
-                    <strong style="color:var(--pv-red)">CABINET ALIGNMENT ERROR</strong><br>
-                    Physical dimensions do not match whole cabinets. <br><br>
-                    <span id="errorSuggestions"></span>
-                </div>
-
-                <span class="section-title">Physical Specs</span>
-                
-                <div class="input-pair-grid">
-                    <div class="input-box">
-                        <label>Target Diagonal (Inches)</label>
-                        <input type="number" id="diag" placeholder="---" step="0.1" oninput="manualInput('diag')">
+    <div class="main-container">
+        <div class="content-grid">
+            <div class="panel">
+                <div class="section-wrapper">
+                    <div id="errorBox" class="error-overlay">
+                        <strong style="color:var(--pv-red)">CABINET ALIGNMENT ERROR</strong><br>
+                        Physical dimensions do not match whole cabinets. <br><br>
+                        <span id="errorSuggestions"></span>
                     </div>
-                    <div class="input-box">
-                        <label>Aspect Ratio</label>
-                        <select id="ratio" onchange="manualInput('diag')">
-                            <option value="custom" selected>Custom (Free Input)</option>
-                            <option value="1.77777777778">16:9 (Standard)</option>
-                            <option value="2.33333333333">21:9 (Ultrawide)</option>
-                            <option value="3.55555555556">32:9 (Panoramic)</option>
+
+                    <span class="section-title">Physical Specs</span>
+                    
+                    <div class="input-pair-grid">
+                        <div class="input-box">
+                            <label>Target Diagonal (Inches)</label>
+                            <input type="number" id="diag" placeholder="---" step="0.1" oninput="manualInput('diag')">
+                        </div>
+                        <div class="input-box">
+                            <label>Aspect Ratio</label>
+                            <select id="ratio" onchange="manualInput('diag')">
+                                <option value="custom" selected>Custom (Free Input)</option>
+                                <option value="1.77777777778">16:9 (Standard)</option>
+                                <option value="2.33333333333">21:9 (Ultrawide)</option>
+                                <option value="3.55555555556">32:9 (Panoramic)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-pair-grid">
+                        <div class="input-box">
+                            <label>Width (mm)</label>
+                            <input type="number" id="manualW" placeholder="---" oninput="manualInput('mm')">
+                        </div>
+                        <div class="input-box">
+                            <label>Height (mm)</label>
+                            <input type="number" id="manualH" placeholder="---" oninput="manualInput('mm')">
+                        </div>
+                    </div>
+
+                    <span class="section-title" style="margin-top: 40px;">Pixel Specs</span>
+
+                    <div class="input-box" style="margin-bottom: 20px;">
+                        <label>Pixel Pitch (mm)</label>
+                        <select id="pitch" onchange="manualInput('pitch')">
+                            <option value="2.5">2.5 mm</option>
+                            <option value="2.1">2.1 mm</option>
+                            <option value="1.9">1.9 mm</option>
+                            <option value="1.5" selected>1.5 mm</option>
+                            <option value="1.2">1.2 mm</option>
+                            <option value="0.9">0.9 mm</option>
+                            <option value="0.7">0.7 mm</option>
                         </select>
                     </div>
-                </div>
 
-                <div class="input-pair-grid">
-                    <div class="input-box">
-                        <label>Width (mm)</label>
-                        <input type="number" id="manualW" placeholder="---" oninput="manualInput('mm')">
+                    <div class="input-pair-grid">
+                        <div class="input-box">
+                            <label>Horizontal Res</label>
+                            <input type="number" id="resW" placeholder="---" readonly style="opacity:0.6">
+                        </div>
+                        <div class="input-box">
+                            <label>Vertical Res</label>
+                            <input type="number" id="resH" placeholder="---" readonly style="opacity:0.6">
+                        </div>
                     </div>
-                    <div class="input-box">
-                        <label>Height (mm)</label>
-                        <input type="number" id="manualH" placeholder="---" oninput="manualInput('mm')">
-                    </div>
+
+                    <button class="btn-reset" onclick="resetAll()">Reset All Fields</button>
                 </div>
-
-                <span class="section-title" style="margin-top: 40px;">Pixel Specs</span>
-
-                <div class="input-box" style="margin-bottom: 20px;">
-                    <label>Pixel Pitch (mm)</label>
-                    <select id="pitch" onchange="manualInput('pitch')">
-                        <option value="2.5">2.5 mm</option>
-                        <option value="2.1">2.1 mm</option>
-                        <option value="1.9">1.9 mm</option>
-                        <option value="1.5" selected>1.5 mm</option>
-                        <option value="1.2">1.2 mm</option>
-                        <option value="0.9">0.9 mm</option>
-                        <option value="0.7">0.7 mm</option>
-                    </select>
-                </div>
-
-                <div class="input-pair-grid">
-                    <div class="input-box">
-                        <label>Horizontal Res</label>
-                        <input type="number" id="resW" placeholder="---" readonly style="opacity:0.6">
-                    </div>
-                    <div class="input-box">
-                        <label>Vertical Res</label>
-                        <input type="number" id="resH" placeholder="---" readonly style="opacity:0.6">
-                    </div>
-                </div>
-
-                <button class="btn-reset" onclick="resetAll()">Reset All Fields</button>
-            </div>
-        </div>
-
-        <div class="panel" style="background: #282828;">
-            <span class="section-title">Results</span>
-            <div class="result-card">
-                <div class="result-row"><span class="val-label">Current Aspect Ratio</span><span class="val-output val-red" id="currentRatioOutput">-</span></div>
-                <div class="result-row"><span class="val-label">Active Area</span><span class="val-output" id="activeArea">-</span></div>
-                <div class="result-row"><span class="val-label">Exact Layout</span><span class="val-output val-red" id="cabLayout">-</span></div>
-                <div class="result-row"><span class="val-label">Cabinet Count</span><span class="val-output" id="totalCabs">-</span></div>
             </div>
 
-            <div id="ratioAdvisorCard" class="result-card" style="display:none; border-left: 4px solid #aaa;">
-                <span class="val-label" style="display:block; margin-bottom:10px;">Ratio Proximity Advisor</span>
-                <div id="ratioAdvisorContent" style="font-size: 0.75rem; color:#bbb; line-height: 1.6;"></div>
-            </div>
+            <div class="panel" style="background: #282828;">
+                <span class="section-title">Results</span>
+                <div class="result-card">
+                    <div class="result-row"><span class="val-label">Current Aspect Ratio</span><span class="val-output val-red" id="currentRatioOutput">-</span></div>
+                    <div class="result-row"><span class="val-label">Active Area</span><span class="val-output" id="activeArea">-</span></div>
+                    <div class="result-row"><span class="val-label">Exact Layout</span><span class="val-output val-red" id="cabLayout">-</span></div>
+                    <div class="result-row"><span class="val-label">Cabinet Count</span><span class="val-output" id="totalCabs">-</span></div>
+                </div>
 
-            <div class="result-card">
-                <div class="result-row"><span class="val-label">Total Pixels</span><span class="val-output" id="totalPx">-</span></div>
-                <div class="result-row"><span class="val-label">Stress per Port</span><span class="val-output" id="portStress">-</span></div>
-                <div class="result-row"><span class="val-label">Ports (650k)</span><span class="val-output" id="ports650">-</span></div>
-                <div class="result-row"><span class="val-label">Ports (5G)</span><span class="val-output" id="ports5G">-</span></div>
-            </div>
+                <div id="ratioAdvisorCard" class="result-card" style="display:none; border-left: 4px solid #aaa;">
+                    <span class="val-label" style="display:block; margin-bottom:10px;">Ratio Proximity Advisor</span>
+                    <div id="ratioAdvisorContent" style="font-size: 0.75rem; color:#bbb; line-height: 1.6;"></div>
+                </div>
 
-            <div class="result-card" style="border-left: 4px solid var(--pv-red);">
-                <div class="result-row"><span class="val-label">Novastar Unit</span><span class="val-output val-red" id="novaProcessor">-</span></div>
-                <div class="result-row"><span class="val-label">Viewing Distance</span><span class="val-output" id="viewRange">-</span></div>
-                <div class="result-row"><span class="val-label">Brompton 1G</span><span class="val-output" id="bromptonPorts">-</span></div>
+                <div class="result-card">
+                    <div class="result-row"><span class="val-label">Total Pixels</span><span class="val-output" id="totalPx">-</span></div>
+                    <div class="result-row"><span class="val-label">Stress per Port</span><span class="val-output" id="portStress">-</span></div>
+                    <div class="result-row"><span class="val-label">Ports (650k)</span><span class="val-output" id="ports650">-</span></div>
+                    <div class="result-row"><span class="val-label">Ports (5G)</span><span class="val-output" id="ports5G">-</span></div>
+                </div>
+
+                <div class="result-card" style="border-left: 4px solid var(--pv-red);">
+                    <div class="result-row"><span class="val-label">Novastar Unit</span><span class="val-output val-red" id="novaProcessor">-</span></div>
+                    <div class="result-row"><span class="val-label">Viewing Distance</span><span class="val-output" id="viewRange">-</span></div>
+                    <div class="result-row"><span class="val-label">Brompton 1G</span><span class="val-output" id="bromptonPorts">-</span></div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div class="footer">PRIMEVIEW GLOBAL - LED CONFIGURATOR PRO</div>
+    <div class="footer">PRIMEVIEW GLOBAL - LED CONFIGURATOR PRO</div>
 
 <script>
 const CAB_W = 600;
