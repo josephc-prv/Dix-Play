@@ -86,34 +86,38 @@
             .content-grid { grid-template-columns: 1fr 1.2fr; }
         }
 
-        .panel { padding: 25px; background: var(--pv-anthracite); }
+        .panel { padding: 30px; background: var(--pv-anthracite); }
+
+        /* Contenitore principale SX per uniformare tutto */
+        .section-wrapper {
+            width: 100%;
+            max-width: 450px; /* Leggermente più largo per ospitare i dropdown */
+            margin: 0 auto;
+        }
 
         .section-title {
             color: var(--pv-red);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1.2px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             display: block;
             border-left: 4px solid var(--pv-red);
             padding-left: 12px;
+            width: 100%;
         }
 
-        .input-box { margin-bottom: 15px; }
-        
-        .row-inputs { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 10px; 
+        /* Griglia a due colonne per accoppiare Input e Preset */
+        .input-pair-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: end;
         }
 
-        .input-group {
-            display: flex;
-            gap: 5px;
-        }
-        .input-group input { flex: 2; }
-        .input-group select { flex: 1; min-width: 90px; font-size: 0.8rem; }
+        .input-box { width: 100%; }
 
         label {
             display: block;
@@ -122,6 +126,15 @@
             margin-bottom: 6px;
             text-transform: uppercase;
             font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .sub-label {
+            font-size: 0.6rem;
+            color: var(--pv-red);
+            margin-bottom: 6px;
+            font-weight: bold;
+            text-transform: uppercase;
         }
 
         input, select {
@@ -129,14 +142,21 @@
             background: var(--pv-dark);
             border: 1px solid #555;
             color: var(--pv-white);
-            padding: 10px;
+            padding: 12px;
             font-size: 0.95rem;
             border-radius: 4px;
+            height: 48px; /* Altezza fissa per tutti */
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--pv-red);
+            outline: none;
         }
 
         .btn-reset {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             background: transparent;
             border: 2px solid var(--pv-red);
             color: var(--pv-white);
@@ -145,15 +165,17 @@
             cursor: pointer;
             border-radius: 4px;
             margin-top: 10px;
+            transition: background 0.3s;
         }
 
         .btn-reset:hover { background: var(--pv-red); }
 
+        /* Pannello DX */
         .result-card {
             background: var(--pv-dark);
-            padding: 12px 15px;
+            padding: 15px;
             border-radius: 4px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             border: 1px solid #333;
         }
 
@@ -161,11 +183,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
 
         .val-label { font-size: 0.72rem; color: #999; text-transform: uppercase; }
-        .val-output { font-size: 0.95rem; font-weight: 700; }
+        .val-output { font-size: 1rem; font-weight: 700; }
         .val-red { color: var(--pv-red); }
 
         .footer {
@@ -188,129 +210,136 @@
 
     <div class="content-grid">
         <div class="panel">
-            <span class="section-title">Specifications</span>
-            
-            <div class="input-box">
-                <label>Target Diagonal (Inches)</label>
-                <div class="input-group">
-                    <input type="number" id="diag" value="138" step="0.1" oninput="manualInput('diag')">
-                    <select id="standardDiag" onchange="setStandardDiag()">
-                        <option value="">Custom</option>
-                        <option value="55">55"</option>
-                        <option value="65">65"</option>
-                        <option value="75">75"</option>
-                        <option value="86">86"</option>
-                        <option value="98">98"</option>
-                        <option value="110">110"</option>
-                        <option value="138" selected>138"</option>
-                        <option value="165">165"</option>
-                        <option value="198">198"</option>
-                        <option value="220">220"</option>
+            <div class="section-wrapper">
+                <span class="section-title">Physical Specs</span>
+                
+                <div class="input-pair-grid">
+                    <div class="input-box">
+                        <label>Target Diagonal (Inches)</label>
+                        <input type="number" id="diag" placeholder="---" step="0.1" oninput="manualInput('diag')">
+                    </div>
+                    <div class="input-box">
+                        <div class="sub-label">Preset Size</div>
+                        <select id="standardDiag" onchange="setStandardDiag()">
+                            <option value="" selected disabled>Choose...</option>
+                            <option value="custom">Custom</option>
+                            <option value="55">55"</option>
+                            <option value="75">75"</option>
+                            <option value="98">98"</option>
+                            <option value="110">110"</option>
+                            <option value="138">138"</option>
+                            <option value="165">165"</option>
+                            <option value="220">220"</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-pair-grid">
+                    <div class="input-box">
+                        <label>Width (mm)</label>
+                        <input type="number" id="manualW" placeholder="---" oninput="manualInput('mm')">
+                    </div>
+                    <div class="input-box">
+                        <label>Height (mm)</label>
+                        <input type="number" id="manualH" placeholder="---" oninput="manualInput('mm')">
+                    </div>
+                </div>
+
+                <div class="input-box" style="margin-bottom: 20px;">
+                    <label>Aspect Ratio</label>
+                    <select id="ratio" onchange="manualInput('diag')">
+                        <option value="1.77777777778">16:9 (Standard)</option>
+                        <option value="2.33333333333">21:9 (Ultrawide)</option>
+                        <option value="3.55555555556">32:9 (Panoramic)</option>
+                        <option value="1.33333333333">4:3</option>
                     </select>
                 </div>
-            </div>
 
-            <div class="row-inputs">
-                <div class="input-box">
-                    <label>Width (mm)</label>
-                    <input type="number" id="manualW" step="1" oninput="manualInput('mm')">
+                <span class="section-title" style="margin-top: 40px;">Pixel Specs</span>
+
+                <div class="input-box" style="margin-bottom: 20px;">
+                    <label>Pixel Pitch (mm)</label>
+                    <input type="number" id="pitch" value="1.58" step="0.01" oninput="manualInput('pitch')">
                 </div>
-                <div class="input-box">
-                    <label>Height (mm)</label>
-                    <input type="number" id="manualH" step="1" oninput="manualInput('mm')">
+
+                <div class="input-pair-grid">
+                    <div class="input-box">
+                        <label>Vertical Res (Pixels)</label>
+                        <input type="number" id="resH" placeholder="---" oninput="manualInput('res')">
+                    </div>
+                    <div class="input-box">
+                        <div class="sub-label">Preset Res</div>
+                        <select id="standardRes" onchange="setStandardRes()">
+                            <option value="" selected disabled>Choose...</option>
+                            <option value="custom">Custom</option>
+                            <option value="720">HD Ready</option>
+                            <option value="1080">Full HD</option>
+                            <option value="2160">4K (UHD)</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            <div class="input-box">
-                <label>Aspect Ratio</label>
-                <select id="ratio" onchange="manualInput('diag')">
-                    <option value="1.77777777778">16:9 (Standard)</option>
-                    <option value="2.33333333333">21:9 (Ultrawide)</option>
-                    <option value="3.55555555556">32:9 (Panoramic)</option>
-                    <option value="1.33333333333">4:3</option>
-                </select>
+                <button class="btn-reset" onclick="resetAll()">Reset All Fields</button>
             </div>
-
-            <div class="input-box">
-                <label>Pixel Pitch (mm)</label>
-                <input type="number" id="pitch" value="1.58" step="0.01" oninput="manualInput('pitch')">
-            </div>
-
-            <div class="input-box">
-                <label>Vertical Resolution (Pixels)</label>
-                <div class="input-group">
-                    <input type="number" id="resH" value="1080" oninput="manualInput('res')">
-                    <select id="standardRes" onchange="setStandardRes()">
-                        <option value="">Custom</option>
-                        <option value="720">HD Ready</option>
-                        <option value="1080" selected>Full HD</option>
-                        <option value="2160">4K (UHD)</option>
-                        <option value="4320">8K (UHD)</option>
-                    </select>
-                </div>
-            </div>
-
-            <button class="btn-reset" onclick="resetAll()">Reset All Fields</button>
         </div>
 
         <div class="panel" style="background: #282828;">
-            <span class="section-title">Physical Output</span>
+            <span class="section-title">Results</span>
             <div class="result-card">
                 <div class="result-row">
-                    <span class="val-label">Active Area (W x H)</span>
-                    <span class="val-output" id="activeArea">0 x 0 mm</span>
+                    <span class="val-label">Active Area</span>
+                    <span class="val-output" id="activeArea">-</span>
                 </div>
                 <div class="result-row">
-                    <span class="val-label">Theoretical Footprint</span>
-                    <span class="val-output" id="footprint">0 x 0 mm</span>
+                    <span class="val-label">Footprint</span>
+                    <span class="val-output" id="footprint">-</span>
                 </div>
                 <div class="result-row">
-                    <span class="val-label">Exact Cabinet Layout</span>
-                    <span class="val-output val-red" id="cabLayout">0 x 0</span>
+                    <span class="val-label">Exact Layout</span>
+                    <span class="val-output val-red" id="cabLayout">-</span>
                 </div>
                 <div class="result-row">
-                    <span class="val-label">Exact Cabinet Count</span>
-                    <span class="val-output" id="totalCabs">0</span>
+                    <span class="val-label">Cabinet Count</span>
+                    <span class="val-output" id="totalCabs">-</span>
                 </div>
             </div>
 
-            <span class="section-title">Pixel & Data Loading</span>
             <div class="result-card">
                 <div class="result-row">
                     <span class="val-label">Total Pixels</span>
-                    <span class="val-output" id="totalPx">0</span>
+                    <span class="val-output" id="totalPx">-</span>
                 </div>
                 <div class="result-row">
-                    <span class="val-label">Standard Ports (650k)</span>
-                    <span class="val-output" id="ports650">0</span>
+                    <span class="val-label">Ports (650k)</span>
+                    <span class="val-output" id="ports650">-</span>
                 </div>
                 <div class="result-row">
-                    <span class="val-label">High Cap Ports (5Gb)</span>
-                    <span class="val-output" id="ports5G">0</span>
+                    <span class="val-label">Ports (5G)</span>
+                    <span class="val-output" id="ports5G">-</span>
                 </div>
             </div>
 
-            <span class="section-title">Viewing & Novastar Series</span>
             <div class="result-card" style="border-left: 4px solid var(--pv-red);">
                 <div class="result-row">
-                    <span class="val-label">Viewing (Min - Rec)</span>
-                    <span class="val-output"><span id="viewMin">0</span> - <span id="viewMax">0</span> m</span>
+                    <span class="val-label">Viewing Distance</span>
+                    <span class="val-output" id="viewRange">-</span>
                 </div>
                 <div class="result-row">
-                    <span class="val-label">Suggested VX Unit (@590k)</span>
+                    <span class="val-label">Novastar Unit</span>
                     <span class="val-output val-red" id="novaProcessor">-</span>
                 </div>
             </div>
+
             <div class="result-card">
                 <div class="result-row">
-                    <span class="val-label">Brompton Tessera (1G)</span>
-                    <span class="val-output" id="bromptonPorts">0 Ports</span>
+                    <span class="val-label">Brompton 1G</span>
+                    <span class="val-output" id="bromptonPorts">-</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="footer">PRIMEVIEW GLOBAL - LED TECHNICAL CONFIGURATOR</div>
+    <div class="footer">PRIMEVIEW GLOBAL - LED CONFIGURATOR PRO</div>
 </div>
 
 <script>
@@ -320,10 +349,9 @@ const CAP_650 = 650000;
 const CAP_590 = 590000;
 const CAP_5G = 5000000;
 
-// Sincronizzazione Dropdown -> Input
 function setStandardDiag() {
     const val = document.getElementById('standardDiag').value;
-    if (val !== "") {
+    if (val && val !== "custom") {
         document.getElementById('diag').value = val;
         runCalc('diag');
     }
@@ -331,43 +359,41 @@ function setStandardDiag() {
 
 function setStandardRes() {
     const val = document.getElementById('standardRes').value;
-    if (val !== "") {
+    if (val && val !== "custom") {
         document.getElementById('resH').value = val;
         runCalc('res');
     }
 }
 
-// Sincronizzazione Input Manuale -> Dropdown reset to Custom
 function manualInput(source) {
-    if (source === 'diag' || source === 'mm') {
-        document.getElementById('standardDiag').value = "";
-    }
-    if (source === 'res') {
-        document.getElementById('standardRes').value = "";
-    }
+    if (source === 'diag' || source === 'mm') document.getElementById('standardDiag').value = "custom";
+    if (source === 'res') document.getElementById('standardRes').value = "custom";
     runCalc(source);
 }
 
 function resetAll() {
-    document.getElementById('diag').value = 138;
-    document.getElementById('standardDiag').value = "138";
-    document.getElementById('ratio').value = 1.77777777778;
-    document.getElementById('pitch').value = 1.58;
-    document.getElementById('resH').value = 1080;
-    document.getElementById('standardRes').value = "1080";
-    runCalc('diag');
+    document.getElementById('diag').value = "";
+    document.getElementById('standardDiag').selectedIndex = 0;
+    document.getElementById('manualW').value = "";
+    document.getElementById('manualH').value = "";
+    document.getElementById('resH').value = "";
+    document.getElementById('standardRes').selectedIndex = 0;
+    const ids = ['activeArea', 'footprint', 'cabLayout', 'totalCabs', 'totalPx', 'ports650', 'ports5G', 'viewRange', 'novaProcessor', 'bromptonPorts'];
+    ids.forEach(id => document.getElementById(id).innerText = "-");
 }
 
 function runCalc(source) {
-    let diag = parseFloat(document.getElementById('diag').value) || 0;
+    let diag = parseFloat(document.getElementById('diag').value);
     let ratio = parseFloat(document.getElementById('ratio').value);
     let pitch = parseFloat(document.getElementById('pitch').value) || 1.5;
-    let resH = parseFloat(document.getElementById('resH').value) || 0;
-    let manualW = parseFloat(document.getElementById('manualW').value) || 0;
+    let resH = parseFloat(document.getElementById('resH').value);
+    let manualW = parseFloat(document.getElementById('manualW').value);
+
+    if (isNaN(diag) && isNaN(manualW)) return;
 
     let wMm, hMm;
 
-    if (source === 'mm') {
+    if (source === 'mm' && !isNaN(manualW)) {
         wMm = manualW; hMm = manualW / ratio;
         document.getElementById('manualH').value = Math.round(hMm);
         diag = (Math.sqrt(Math.pow(wMm, 2) + Math.pow(hMm, 2))) / 25.4;
@@ -393,27 +419,19 @@ function runCalc(source) {
     const cabsH = hMm / CAB_H;
 
     const reqPorts590 = Math.ceil(totalPx / CAP_590);
-    let suggested = "-";
-    if (reqPorts590 <= 6) suggested = "VX600 Pro";
-    else if (reqPorts590 <= 10) suggested = "VX1000 Pro";
-    else if (reqPorts590 <= 20) suggested = "VX2000 Pro";
-    else suggested = "H-Series / COEX";
+    let suggested = reqPorts590 <= 6 ? "VX600 Pro" : reqPorts590 <= 10 ? "VX1000 Pro" : reqPorts590 <= 20 ? "VX2000 Pro" : "H-Series";
 
-    // Update UI
-    document.getElementById('activeArea').innerText = `${Math.round(wMm)} x ${Math.round(hMm)} mm`;
-    document.getElementById('footprint').innerText = `${(cabsW * CAB_W).toFixed(1)} x ${(cabsH * CAB_H).toFixed(1)} mm`;
-    document.getElementById('cabLayout').innerText = `${cabsW.toFixed(2)} x ${cabsH.toFixed(2)}`;
+    document.getElementById('activeArea').innerText = `${Math.round(wMm)}x${Math.round(hMm)}mm`;
+    document.getElementById('footprint').innerText = `${(cabsW * CAB_W).toFixed(0)}x${(cabsH * CAB_H).toFixed(0)}mm`;
+    document.getElementById('cabLayout').innerText = `${cabsW.toFixed(2)}x${cabsH.toFixed(2)}`;
     document.getElementById('totalCabs').innerText = (cabsW * cabsH).toFixed(2);
     document.getElementById('totalPx').innerText = totalPx.toLocaleString();
     document.getElementById('ports650').innerText = Math.ceil(totalPx / CAP_650);
     document.getElementById('ports5G').innerText = Math.ceil(totalPx / CAP_5G);
-    document.getElementById('viewMin').innerText = (pitch * 1).toFixed(1);
-    document.getElementById('viewMax').innerText = (pitch * 3).toFixed(1);
+    document.getElementById('viewRange').innerText = `${(pitch * 1).toFixed(1)}-${(pitch * 3).toFixed(1)}m`;
     document.getElementById('novaProcessor').innerText = suggested;
     document.getElementById('bromptonPorts').innerText = Math.ceil(totalPx / 524000) + " Ports";
 }
-
-runCalc('diag');
 </script>
 
 </body>
