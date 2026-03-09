@@ -24,7 +24,6 @@
             display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
 
-        /* HEADER CON DOPPIO LOGO */
         .header-logo-container {
             width: 100%;
             max-width: 1150px;
@@ -147,7 +146,7 @@
                         </div>
                         <div class="input-box">
                             <label>Aspect Ratio</label>
-                            <select id="ratio" onchange="manualInput('diag')">
+                            <select id="ratio" onchange="manualInput('ratio')">
                                 <option value="custom" selected>Custom (Free Input)</option>
                                 <option value="1.77777777778">16:9 (Standard)</option>
                                 <option value="2.33333333333">21:9 (Ultrawide)</option>
@@ -249,19 +248,41 @@ function runCalc(source) {
     let manualH = parseFloat(document.getElementById('manualH').value);
     let ratio;
 
-    if (isNaN(diag) && (isNaN(manualW) || isNaN(manualH))) return;
+    // Se non abbiamo input sufficienti, usciamo
+    if (isNaN(diag) && isNaN(manualW) && isNaN(manualH)) return;
 
     let wMm, hMm;
 
     if (ratioVal === 'custom') {
-        wMm = manualW; hMm = manualH;
-        ratio = wMm / hMm;
-        diag = (Math.sqrt(Math.pow(wMm, 2) + Math.pow(hMm, 2))) / 25.4;
-        document.getElementById('diag').value = isNaN(diag) ? "" : diag.toFixed(1);
+        if (source === 'diag') {
+            // Se l'utente cambia la diagonale in modalità custom, 
+            // calcoliamo il ratio basandoci sui valori correnti di W e H (se esistono)
+            // Altrimenti usiamo 16:9 come base di partenza.
+            let currentW = manualW || 16;
+            let currentH = manualH || 9;
+            let currentRatio = currentW / currentH;
+            
+            hMm = (diag / Math.sqrt(Math.pow(currentRatio, 2) + 1)) * 25.4;
+            wMm = hMm * currentRatio;
+            
+            document.getElementById('manualW').value = Math.round(wMm);
+            document.getElementById('manualH').value = Math.round(hMm);
+        } else {
+            // Se l'utente inserisce W o H manualmente
+            wMm = manualW;
+            hMm = manualH;
+            if (!isNaN(wMm) && !isNaN(hMm) && hMm !== 0) {
+                ratio = wMm / hMm;
+                diag = (Math.sqrt(Math.pow(wMm, 2) + Math.pow(hMm, 2))) / 25.4;
+                document.getElementById('diag').value = diag.toFixed(1);
+            }
+        }
     } else {
+        // Logica Standard (Ratio preimpostati)
         ratio = parseFloat(ratioVal);
         if (source === 'mm') {
-            wMm = manualW; hMm = manualW / ratio;
+            wMm = manualW; 
+            hMm = manualW / ratio;
             document.getElementById('manualH').value = Math.round(hMm);
             diag = (Math.sqrt(Math.pow(wMm, 2) + Math.pow(hMm, 2))) / 25.4;
             document.getElementById('diag').value = isNaN(diag) ? "" : diag.toFixed(1);
@@ -273,20 +294,23 @@ function runCalc(source) {
         }
     }
 
-    let ratioLabel = isNaN(ratio) ? "-" : ratio.toFixed(2) + ":1";
-    let is169 = Math.abs(ratio - 1.777) < 0.02;
-    let is219 = Math.abs(ratio - 2.333) < 0.02;
-    let is329 = Math.abs(ratio - 3.555) < 0.02;
+    // Calcolo Ratio effettivo per i risultati
+    let finalRatio = wMm / hMm;
+    let ratioLabel = isNaN(finalRatio) ? "-" : finalRatio.toFixed(2) + ":1";
+    let is169 = Math.abs(finalRatio - 1.777) < 0.02;
+    let is219 = Math.abs(finalRatio - 2.333) < 0.02;
+    let is329 = Math.abs(finalRatio - 3.555) < 0.02;
 
     if (is169) ratioLabel = "16:9";
     if (is219) ratioLabel = "21:9";
     if (is329) ratioLabel = "32:9";
 
+    // Advisor logica custom
     if (ratioVal === 'custom') {
         let advisorHTML = "";
-        if (!is169 && !isNaN(manualW)) advisorHTML += `To hit 16:9: Height ${Math.round(manualW / 1.777)}mm<br>`;
-        if (!is219 && !isNaN(manualW)) advisorHTML += `To hit 21:9: Height ${Math.round(manualW / 2.333)}mm<br>`;
-        if (!is329 && !isNaN(manualW)) advisorHTML += `To hit 32:9: Height ${Math.round(manualW / 3.555)}mm`;
+        if (!is169 && !isNaN(wMm)) advisorHTML += `To hit 16:9: Height ${Math.round(wMm / 1.777)}mm<br>`;
+        if (!is219 && !isNaN(wMm)) advisorHTML += `To hit 21:9: Height ${Math.round(wMm / 2.333)}mm<br>`;
+        if (!is329 && !isNaN(wMm)) advisorHTML += `To hit 32:9: Height ${Math.round(wMm / 3.555)}mm`;
         
         if (advisorHTML !== "") {
             ratioAdvisor.style.display = 'block';
@@ -298,16 +322,18 @@ function runCalc(source) {
         ratioAdvisor.style.display = 'none';
     }
 
+    // Calcolo CABINET e ERRORI
     const cabsW = wMm / CAB_W;
     const cabsH = hMm / CAB_H;
     const isWValid = Math.abs(cabsW - Math.round(cabsW)) < 0.01;
     const isHValid = Math.abs(cabsH - Math.round(cabsH)) < 0.01;
 
-    if (!isWValid || !isHValid) {
+    if ((!isWValid || !isHValid) && !isNaN(cabsW)) {
         errorBox.style.display = 'block';
         document.getElementById('errorSuggestions').innerHTML = `Closest Valid Widths: ${Math.floor(cabsW)*CAB_W} or ${Math.ceil(cabsW)*CAB_W}mm<br>Closest Valid Heights: ${Math.floor(cabsH)*CAB_H} or ${Math.ceil(cabsH)*CAB_H}mm`;
     } else { errorBox.style.display = 'none'; }
 
+    // RISOLUZIONE PIXEL
     const resW = Math.round(wMm / pitch);
     const resH = Math.round(hMm / pitch);
     document.getElementById('resW').value = isNaN(resW) ? "" : resW;
@@ -317,6 +343,7 @@ function runCalc(source) {
     const reqPorts590 = Math.ceil(totalPx / CAP_590);
     const pxPerPort = reqPorts590 > 0 ? Math.round(totalPx / reqPorts590) : 0;
 
+    // OUTPUT FINALI
     document.getElementById('currentRatioOutput').innerText = ratioLabel;
     document.getElementById('activeArea').innerText = isNaN(wMm) ? "-" : `${Math.round(wMm)}x${Math.round(hMm)}mm (${diag.toFixed(1)}")`;
     document.getElementById('cabLayout').innerText = isNaN(cabsW) ? "-" : `${cabsW.toFixed(2)}x${cabsH.toFixed(2)}`;
