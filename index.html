@@ -34,20 +34,19 @@
             border-radius: 8px;
             border-bottom: 5px solid var(--pv-red);
             display: flex;
-            justify-content: center; /* Centra i loghi */
+            justify-content: center; 
             align-items: center;
-            gap: 50px; /* Spazio tra logo 1 e logo 2 */
+            gap: 50px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            flex-wrap: wrap; /* Adattabile su mobile */
+            flex-wrap: wrap;
         }
 
         .header-logo-container img {
-            max-width: 320px; /* Dimensione bilanciata per due loghi */
+            max-width: 320px; 
             width: 100%;
             height: auto;
         }
 
-        /* Divisore tra i loghi */
         .logo-divider {
             width: 2px;
             height: 50px;
@@ -111,7 +110,7 @@
             padding: 20px; 
             text-align: center; 
             font-size: 0.65rem; 
-            color: var(--pv-grey-text); /* Colore antracite/grigio scuro richiesto */
+            color: var(--pv-grey-text); 
             background: var(--pv-dark); 
             text-transform: uppercase; 
             width: 100%; 
@@ -125,9 +124,7 @@
 
     <div class="header-logo-container">
         <img src="logo.png" alt="Primeview Global Logo">
-        
         <div class="logo-divider"></div>
-        
         <img src="Dixplay_logo.png" alt="Dix-Play Logo">
     </div>
 
@@ -177,11 +174,11 @@
                         <select id="pitch" onchange="manualInput('pitch')">
                             <option value="2.5">2.5 mm</option>
                             <option value="2.1">2.1 mm</option>
-                            <option value="1.9">1.9 mm</option>
-                            <option value="1.5" selected>1.5 mm</option>
-                            <option value="1.2">1.2 mm</option>
-                            <option value="0.9">0.9 mm</option>
-                            <option value="0.7">0.7 mm</option>
+                            <option value="1.87">1.87 mm COB</option>
+                            <option value="1.56" selected>1.56 mm COB</option>
+                            <option value="1.25">1.25 mm COB</option>
+                            <option value="0.93">0.93 mm COB</option>
+                            <option value="0.7">0.7 mm COB</option>
                         </select>
                     </div>
 
